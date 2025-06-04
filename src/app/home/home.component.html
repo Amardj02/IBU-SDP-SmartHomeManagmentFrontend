@@ -1,0 +1,8 @@
+<div *ngIf="getAuthService().isAuthenticated()">
+
+  <p>Welcome to our app! You are logged in.</p>
+</div>
+<div *ngIf="!getAuthService().isAuthenticated()">
+
+  <p>Welcome to our app! Please log in to access more features.</p>
+</div>

@@ -1,0 +1,144 @@
+<div>
+    <h2>Analog Devices</h2>
+    <div *ngFor="let device of analogDevices">
+      <p>{{ device.name }}</p>
+      <button (click)="deleteAnalogDevice(device.id)">Delete</button>
+      <button (click)="showUpdateAnalogForm(device)">Update</button>
+      <button (click)="toggleActive(device.id, 'analog')">Toggle Active</button>
+    </div>
+    <form *ngIf="showAnalogForm" (submit)="createAnalogDevice(); resetAndHideAnalogForm()">
+      <label>Mac Address:</label>
+      <input type="text" [(ngModel)]="newAnalogDevice.mac_address" name="macAddress" required>
+      
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="newAnalogDevice.name" name="name" required>
+      
+      <label>IP:</label>
+      <input type="text" [(ngModel)]="newAnalogDevice.ip" name="ip" required>
+      
+      <label>Room:</label>
+      <input type="text" [(ngModel)]="newAnalogDevice.room" name="room" required>
+      
+      <label>Active:</label>
+      <input type="checkbox" [(ngModel)]="newAnalogDevice.active" name="active">
+      
+      <button type="submit">Create Analog Device</button>
+    </form>
+    <form *ngIf="showUpdateAnalogFormFlag" (submit)="updateAnalogDevice(selectedAnalogDevice.id)">
+      <label>Mac Address:</label>
+      <input type="text" [(ngModel)]="selectedAnalogDevice.mac_address" name="macAddress" required>
+      
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="selectedAnalogDevice.name" name="name" required>
+      
+      <label>IP:</label>
+      <input type="text" [(ngModel)]="selectedAnalogDevice.ip" name="ip" required>
+      
+      <label>Room:</label>
+      <input type="text" [(ngModel)]="selectedAnalogDevice.room" name="room" required>
+      
+      <label>Active:</label>
+      <input type="checkbox" [(ngModel)]="selectedAnalogDevice.active" name="active">
+      
+      <button type="submit">Update Analog Device</button>
+    </form>
+    <button (click)="toggleAnalogForm()">Add Analog Device</button>
+  </div>
+  <div>
+    <h2>Digital Devices</h2>
+    <div *ngFor="let device of digitalDevices">
+      <p>{{ device.name }}</p>
+      <button (click)="deleteDigitalDevice(device.id)">Delete</button>
+      <button (click)="showUpdateDigitalForm(device)">Update</button>
+      <button (click)="toggleActive(device.id, 'digital')">Toggle Active</button>
+    </div>
+    <form *ngIf="showDigitalForm" (submit)="createDigitalDevice()">
+      <label>Mac Address:</label>
+      <input type="text" [(ngModel)]="newDigitalDevice.mac_address" name="macAddress" required>
+      
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="newDigitalDevice.name" name="name" required>
+      
+      <label>IP:</label>
+      <input type="text" [(ngModel)]="newDigitalDevice.ip" name="ip" required>
+      
+      <label>Room:</label>
+      <input type="text" [(ngModel)]="newDigitalDevice.room" name="room" required>
+      
+      <label>Active:</label>
+      <input type="checkbox" [(ngModel)]="newDigitalDevice.active" name="active">
+      
+      <button type="submit">Create Digital Device</button>
+    </form>
+    <form *ngIf="showUpdateDigitalFormFlag" (submit)="updateDigitalDevice(selectedDigitalDevice.id)">
+      <label>Mac Address:</label>
+      <input type="text" [(ngModel)]="selectedDigitalDevice.mac_address" name="macAddress" required>
+      
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="selectedDigitalDevice.name" name="name" required>
+      
+      <label>IP:</label>
+      <input type="text" [(ngModel)]="selectedDigitalDevice.ip" name="ip" required>
+      
+      <label>Room:</label>
+      <input type="text" [(ngModel)]="selectedDigitalDevice.room" name="room" required>
+      
+      <label>Active:</label>
+      <input type="checkbox" [(ngModel)]="selectedDigitalDevice.active" name="active">
+      
+      <button type="submit">Update Digital Device</button>
+    </form>
+    <button (click)="showDigitalForm = !showDigitalForm">Add Digital Device</button>
+  </div>
+  <div>
+    <h2>Smart Devices</h2>
+    <div *ngFor="let device of smartDevices">
+      <p>{{ device.name }}</p>
+      <button (click)="deleteSmartDevice(device.id)">Delete</button>
+      <button (click)="showUpdateSmartForm(device)">Update</button>
+      <button (click)="toggleActive(device.id, 'smart')">Toggle Active</button>
+    </div>
+    <form *ngIf="showSmartForm" (submit)="createSmartDevice()">
+      <label>Protocol Name:</label>
+      <input type="text" [(ngModel)]="newSmartDevice.protocol_name" name="protocolName" required>
+
+      <label>Mac Address:</label>
+      <input type="text" [(ngModel)]="newSmartDevice.mac_address" name="macAddress" required>
+      
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="newSmartDevice.name" name="name" required>
+      
+      <label>IP:</label>
+      <input type="text" [(ngModel)]="newSmartDevice.ip" name="ip" required>
+      
+      <label>Room:</label>
+      <input type="text" [(ngModel)]="newSmartDevice.room" name="room" required>
+      
+      <label>Active:</label>
+      <input type="checkbox" [(ngModel)]="newSmartDevice.active" name="active">
+      
+      <button type="submit">Create Smart Device</button>
+    </form>
+    <form *ngIf="showUpdateSmartFormFlag" (submit)="updateSmartDevice(selectedSmartDevice.id)">
+      <label>Protocol Name:</label>
+      <input type="text" [(ngModel)]="selectedSmartDevice.protocol_name" name="procotolName" required>
+
+      <label>Mac Address:</label>
+      <input type="text" [(ngModel)]="selectedSmartDevice.mac_address" name="macAddress" required>
+      
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="selectedSmartDevice.name" name="name" required>
+      
+      <label>IP:</label>
+      <input type="text" [(ngModel)]="selectedSmartDevice.ip" name="ip" required>
+      
+      <label>Room:</label>
+      <input type="text" [(ngModel)]="selectedSmartDevice.room" name="room" required>
+      
+      <label>Active:</label>
+      <input type="checkbox" [(ngModel)]="selectedSmartDevice.active" name="active">
+      
+      <button type="submit">Update Smart Device</button>
+    </form>
+    <button (click)="showSmartForm = !showSmartForm">Add Smart Device</button>
+  </div>
