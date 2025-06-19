@@ -109,3 +109,39 @@
   width: fit-content;
   height: fit-content;
 }
+/* Make each app-sidenav-link a flex container, aligning icon + text */
+app-sidenav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* space between icon and text */
+  color: inherit;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 8px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Normalize mat-icon inside app-sidenav-link */
+app-sidenav-link mat-icon {
+  font-size: 24px !important;   /* consistent icon size */
+  line-height: 24px;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+/* Remove any weird default padding/margin from mat-icon */
+app-sidenav-link mat-icon[icon] {
+  margin: 0;
+  padding: 0;
+}
+
+/* Optional: hover background for better UI */
+app-sidenav-link:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+}

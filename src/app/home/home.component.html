@@ -1,8 +1,199 @@
-<div *ngIf="getAuthService().isAuthenticated()">
-
-  <p>Welcome to our app! You are logged in.</p>
+<!-- Guest welcome page -->
+<div *ngIf="!isLoggedIn" class="guest-welcome">
+  <div class="welcome-box">
+    <h1>Welcome to Smart Home Management</h1>
+    <p class="subtitle">Track, control, and manually manage your smart space with ease.</p>
+    <div class="features">
+      <div class="feature">
+        <h3>Analog, Digital & Smart</h3>
+        <p>Three categories of device control to keep your system organized.</p>
+      </div>
+      <div class="feature">
+        <h3>Manual Control</h3>
+        <p>Add, update, and delete your devices with full flexibility.</p>
+      </div>
+      <div class="feature">
+        <h3>Secure & Personal</h3>
+        <p>Access your devices securely and privately through your account.</p>
+      </div>
+    </div>
+    <button routerLink="/login" class="btn-primary">Login to Manage Your Home</button>
+  </div>
 </div>
-<div *ngIf="!getAuthService().isAuthenticated()">
 
-  <p>Welcome to our app! Please log in to access more features.</p>
+<!-- Dashboard for logged in users -->
+<div *ngIf="isLoggedIn" class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Device Management Panel</h1>
+    <p class="dashboard-subtitle">
+      Manage all your devices manually in a structured and organized environment.
+      Toggle statuses, update data, and keep full control.
+    </p>
+  </div>
+
+  <!-- Analog Devices Category -->
+  <div class="device-category">
+    <h2>Analog Devices</h2>
+    <div class="devices-list">
+      <div class="device" *ngFor="let device of analogDevices">
+        <div class="device-info">
+          <strong>{{ device.name }}</strong>
+          <span class="status-indicator" [ngClass]="device.active ? 'online' : 'offline'">
+            ({{ device.active ? 'Online' : 'Offline' }})
+          </span>
+        </div>
+        <div>MAC Address: {{ device.mac_address }}</div>
+        <div>IP Address: {{ device.ip }}</div>
+        <div>Room: {{ device.room_name }}</div>
+        <div>Owner: {{ device.owner_username }}</div>
+        <div class="device-actions">
+          <button (click)="deleteAnalogDevice(device.id)">Delete</button>
+          <button (click)="showUpdateAnalogForm(device)">Update</button>
+          <button (click)="toggleActive(device.id, 'analog')">Toggle Active</button>
+        </div>
+      </div>
+    </div>
+    
+    <form *ngIf="showAnalogForm" (submit)="createAnalogDevice(); resetAndHideAnalogForm()" class="device-form">
+      <button type="button" class="close-btn" (click)="toggleAnalogForm()">×</button>
+      <h4>Add New Analog Device</h4>
+      <input type="text" [(ngModel)]="newAnalogDevice.mac_address" name="macAddress" placeholder="Mac Address" required>
+      <input type="text" [(ngModel)]="newAnalogDevice.name" name="name" placeholder="Name" required>
+      <input type="text" [(ngModel)]="newAnalogDevice.ip" name="ip" placeholder="IP Address" required>
+      <select [(ngModel)]="newAnalogDevice.room" name="room" required>
+        <option value="" disabled selected>Select Room</option>
+        <option *ngFor="let room of rooms" [value]="room.id">{{ room.name }}</option>
+      </select>
+      <label><input type="checkbox" [(ngModel)]="newAnalogDevice.active" name="active"> Active</label>
+      <button type="submit">Create Analog Device</button>
+    </form>
+
+    <form *ngIf="showUpdateAnalogFormFlag" (submit)="updateAnalogDevice(selectedAnalogDevice.id)" class="device-form">
+      <button type="button" class="close-btn" (click)="showUpdateAnalogFormFlag = false">×</button>
+      <h4>Update Analog Device</h4>
+      <input type="text" [(ngModel)]="selectedAnalogDevice.mac_address" name="macAddress" placeholder="Mac Address" required>
+      <input type="text" [(ngModel)]="selectedAnalogDevice.name" name="name" placeholder="Name" required>
+      <input type="text" [(ngModel)]="selectedAnalogDevice.ip" name="ip" placeholder="IP Address" required>
+      <select [(ngModel)]="selectedAnalogDevice.room" name="room" required>
+        <option value="" disabled>Select Room</option>
+        <option *ngFor="let room of rooms" [value]="room.id">{{ room.name }}</option>
+      </select>
+      <label><input type="checkbox" [(ngModel)]="selectedAnalogDevice.active" name="active"> Active</label>
+      <button type="submit">Update Analog Device</button>
+    </form>
+
+    <button class="add-device-btn" (click)="toggleAnalogForm()">Add Analog Device</button>
+  </div>
+
+  <!-- Digital Devices Category -->
+  <div class="device-category">
+    <h2>Digital Devices</h2>
+    <div class="devices-list">
+      <div class="device" *ngFor="let device of digitalDevices">
+        <div class="device-info">
+          <strong>{{ device.name }}</strong>
+          <span class="status-indicator" [ngClass]="device.active ? 'online' : 'offline'">
+            ({{ device.active ? 'Online' : 'Offline' }})
+          </span>
+        </div>
+        <div>MAC Address: {{ device.mac_address }}</div>
+        <div>IP Address: {{ device.ip }}</div>
+        <div>Room: {{ device.room_name }}</div>
+        <div>Owner: {{ device.owner_username }}</div>
+        <div class="device-actions">
+          <button (click)="deleteDigitalDevice(device.id)">Delete</button>
+          <button (click)="showUpdateDigitalForm(device)">Update</button>
+          <button (click)="toggleActive(device.id, 'digital')">Toggle Active</button>
+        </div>
+      </div>
+    </div>
+
+    <form *ngIf="showDigitalForm" (submit)="createDigitalDevice()" class="device-form">
+      <button type="button" class="close-btn" (click)="showDigitalForm = false">×</button>
+      <h4>Add New Digital Device</h4>
+      <input type="text" [(ngModel)]="newDigitalDevice.mac_address" name="macAddress" placeholder="Mac Address" required>
+      <input type="text" [(ngModel)]="newDigitalDevice.name" name="name" placeholder="Name" required>
+      <input type="text" [(ngModel)]="newDigitalDevice.ip" name="ip" placeholder="IP Address" required>
+      <select [(ngModel)]="newDigitalDevice.room" name="room" required>
+        <option value="" disabled selected>Select Room</option>
+        <option *ngFor="let room of rooms" [value]="room.id">{{ room.name }}</option>
+      </select>
+      <label><input type="checkbox" [(ngModel)]="newDigitalDevice.active" name="active"> Active</label>
+      <button type="submit">Create Digital Device</button>
+    </form>
+
+    <form *ngIf="showUpdateDigitalFormFlag" (submit)="updateDigitalDevice(selectedDigitalDevice.id)" class="device-form">
+      <button type="button" class="close-btn" (click)="showUpdateDigitalFormFlag = false">×</button>
+      <h4>Update Digital Device</h4>
+      <input type="text" [(ngModel)]="selectedDigitalDevice.mac_address" name="macAddress" placeholder="Mac Address" required>
+      <input type="text" [(ngModel)]="selectedDigitalDevice.name" name="name" placeholder="Name" required>
+      <input type="text" [(ngModel)]="selectedDigitalDevice.ip" name="ip" placeholder="IP Address" required>
+      <select [(ngModel)]="selectedDigitalDevice.room" name="room" required>
+        <option value="" disabled>Select Room</option>
+        <option *ngFor="let room of rooms" [value]="room.id">{{ room.name }}</option>
+      </select>
+      <label><input type="checkbox" [(ngModel)]="selectedDigitalDevice.active" name="active"> Active</label>
+      <button type="submit">Update Digital Device</button>
+    </form>
+
+    <button class="add-device-btn" (click)="showDigitalForm = !showDigitalForm">Add Digital Device</button>
+  </div>
+
+  <!-- Smart Devices Category -->
+  <div class="device-category">
+    <h2>Smart Devices</h2>
+    <div class="devices-list">
+      <div class="device" *ngFor="let device of smartDevices">
+        <div class="device-info">
+          <strong>{{ device.name }}</strong>
+          <span class="status-indicator" [ngClass]="device.active ? 'online' : 'offline'">
+            ({{ device.active ? 'Online' : 'Offline' }})
+          </span>
+        </div>
+        <div>Protocol Name: {{ device.protocol_name }}</div>
+        <div>MAC Address: {{ device.mac_address }}</div>
+        <div>IP Address: {{ device.ip }}</div>
+        <div>Room: {{ device.room_name }}</div>
+        <div>Owner: {{ device.owner_username }}</div>
+        <div class="device-actions">
+          <button (click)="deleteSmartDevice(device.id)">Delete</button>
+          <button (click)="showUpdateSmartForm(device)">Update</button>
+          <button (click)="toggleActive(device.id, 'smart')">Toggle Active</button>
+        </div>
+      </div>
+    </div>
+
+    <form *ngIf="showSmartForm" (submit)="createSmartDevice()" class="device-form">
+      <button type="button" class="close-btn" (click)="showSmartForm = false">×</button>
+      <h4>Add New Smart Device</h4>
+      <input type="text" [(ngModel)]="newSmartDevice.protocol_name" name="protocolName" placeholder="Protocol Name" required>
+      <input type="text" [(ngModel)]="newSmartDevice.mac_address" name="macAddress" placeholder="Mac Address" required>
+      <input type="text" [(ngModel)]="newSmartDevice.name" name="name" placeholder="Name" required>
+      <input type="text" [(ngModel)]="newSmartDevice.ip" name="ip" placeholder="IP Address" required>
+      <select [(ngModel)]="newSmartDevice.room" name="room" required>
+        <option value="" disabled selected>Select Room</option>
+        <option *ngFor="let room of rooms" [value]="room.id">{{ room.name }}</option>
+      </select>
+      <label><input type="checkbox" [(ngModel)]="newSmartDevice.active" name="active"> Active</label>
+      <button type="submit">Create Smart Device</button>
+    </form>
+
+    <form *ngIf="showUpdateSmartFormFlag" (submit)="updateSmartDevice(selectedSmartDevice.id)" class="device-form">
+      <button type="button" class="close-btn" (click)="showUpdateSmartFormFlag = false">×</button>
+      <h4>Update Smart Device</h4>
+      <input type="text" [(ngModel)]="selectedSmartDevice.protocol_name" name="protocolName" placeholder="Protocol Name" required>
+      <input type="text" [(ngModel)]="selectedSmartDevice.mac_address" name="macAddress" placeholder="Mac Address" required>
+      <input type="text" [(ngModel)]="selectedSmartDevice.name" name="name" placeholder="Name" required>
+      <input type="text" [(ngModel)]="selectedSmartDevice.ip" name="ip" placeholder="IP Address" required>
+      <select [(ngModel)]="selectedSmartDevice.room" name="room" required>
+        <option value="" disabled>Select Room</option>
+        <option *ngFor="let room of rooms" [value]="room.id">{{ room.name }}</option>
+      </select>
+      <label><input type="checkbox" [(ngModel)]="selectedSmartDevice.active" name="active"> Active</label>
+      <button type="submit">Update Smart Device</button>
+    </form>
+
+    <button class="add-device-btn" (click)="showSmartForm = !showSmartForm">Add Smart Device</button>
+  </div>
+  <app-toast></app-toast>
 </div>

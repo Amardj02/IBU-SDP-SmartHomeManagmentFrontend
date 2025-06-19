@@ -20,9 +20,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { MatInputModule } from '@angular/material/input';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
+import { SettingsComponent } from './settings/settings.component';
+import { ToastComponent } from './toast/toast.component';
 @NgModule({
-  declarations: [AppComponent, LoginComponent, RegisterComponent, RoomListComponent, HomeComponent,SidenavComponent, SidenavLinkComponent, DashboardComponent],
+  declarations: [AppComponent, LoginComponent, RegisterComponent, RoomListComponent, HomeComponent,SidenavComponent, SidenavLinkComponent, SettingsComponent, ToastComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -39,6 +42,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     MatFormFieldModule,
     MatToolbarModule,
     MatInputModule,
+    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

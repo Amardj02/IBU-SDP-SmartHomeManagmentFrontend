@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
@@ -10,7 +10,8 @@ import { Router } from '@angular/router';
 export class AuthService {
   private apiUrl = 'http://localhost:8000/api/accounts/';
   private roomUrl = 'http://localhost:8000/rooms/';
-
+  private loggedIn = new BehaviorSubject<boolean>(this.isAuthenticated());
+  public isLoggedIn$ = this.loggedIn.asObservable();
 
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -21,7 +22,7 @@ export class AuthService {
       if (response && response.access) {
         localStorage.setItem('access_token', response.access);
         localStorage.setItem('refresh_token', response.refresh);
-        console.log('Access Token Stored:', response.access);
+        this.loggedIn.next(true);
         this.router.navigate(['/rooms']); 
       } else {
         console.error('Access Token not present in the response:', response);
@@ -38,13 +39,35 @@ register(
   lastName: string,
   email: string
 ): Observable<any> {
-  return this.http.post<any>(`${this.apiUrl}register/`, {
-    username,
-    password,
-    first_name: firstName,
-    last_name: lastName,
-    email,
+  const token = localStorage.getItem('access_token');
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
   });
+
+  return this.http.post<any>(
+    `${this.apiUrl}register/`,
+    {
+      username,
+      password,
+      first_name: firstName,
+      last_name: lastName,
+      email,
+    },
+    { headers }
+  );
+}
+getUserInfo(): any {
+  const token = localStorage.getItem('access_token');
+  if (!token) return null;
+
+  const payload = JSON.parse(atob(token.split('.')[1]));
+  return payload;
+}
+
+isSuperUser(): boolean {
+  const userInfo = this.getUserInfo();
+  return userInfo?.is_superuser || false;
 }
   isAuthenticated(): boolean {
     return !!localStorage.getItem('access_token');
@@ -53,6 +76,7 @@ register(
   logout(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    this.loggedIn.next(false); // Notify subscribers that user is logged out
     this.router.navigate(['/login']);
   }
   getRoom(roomId: number): Observable<any> {
@@ -102,4 +126,29 @@ register(
 
     return this.http.delete<any>(`${this.roomUrl}${roomId}/`, { headers });
   }
+
+updateProfile(data: any): Observable<any> {
+  const token = localStorage.getItem('access_token');
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  });
+  return this.http.put('http://localhost:8000/api/accounts/me/', data, { headers });
+}
+
+changePassword(currentPassword: string, newPassword: string): Observable<any> {
+  const body = { current_password: currentPassword, new_password: newPassword };
+  const headers = {
+    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+  };
+  return this.http.post(`${this.apiUrl}change-password/`, body, { headers });
+}
+
+getUser(): Observable<any> {
+  const token = localStorage.getItem('access_token');
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+  });
+  return this.http.get('http://localhost:8000/api/accounts/me/', { headers });
+}
 }

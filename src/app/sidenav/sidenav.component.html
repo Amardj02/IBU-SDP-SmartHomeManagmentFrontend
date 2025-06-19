@@ -1,17 +1,11 @@
 <div class="sidenav-body-container">
     <div class="sidenav-body">
-      <h1>SmartHome</h1>
+      <h1>Smart Home Management</h1>
   
       <app-sidenav-link routerLink="/home" routerLinkActive="active" >
         <mat-icon icon>home</mat-icon>
   
         Home
-      </app-sidenav-link>
-
-      <app-sidenav-link routerLink="/dashboard" routerLinkActive="active" *ngIf="isLoggedIn()">
-        <mat-icon icon>dashboard</mat-icon>
-  
-        Dashboard
       </app-sidenav-link>
   
       <app-sidenav-link routerLink="/login" routerLinkActive="active" *ngIf="!isLoggedIn()">
@@ -20,11 +14,11 @@
         Login
       </app-sidenav-link>
   
-      <app-sidenav-link routerLink="/register" routerLinkActive="active" *ngIf="!isLoggedIn()">
-        <mat-icon icon>account_circle</mat-icon>
-  
-        Register
-      </app-sidenav-link>
+     <app-sidenav-link routerLink="/register" routerLinkActive="active" *ngIf="isSuperUser()">
+        <mat-icon>group</mat-icon>
+        
+        User Management
+    </app-sidenav-link>
   
       <app-sidenav-link routerLink="/rooms" routerLinkActive="active" *ngIf="isLoggedIn()">
         <mat-icon icon>room</mat-icon>
@@ -32,9 +26,9 @@
         Rooms
       </app-sidenav-link>
   
-      <app-sidenav-link routerLink="/settings">
+     <app-sidenav-link routerLink="/settings" routerLinkActive="active" *ngIf="isLoggedIn()">
         <mat-icon icon>settings</mat-icon>
-  
+
         Settings
       </app-sidenav-link>
 

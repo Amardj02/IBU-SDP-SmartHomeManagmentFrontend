@@ -8,19 +8,22 @@ import { AuthService } from '../services/auth.service';
 })
 export class RoomListComponent implements OnInit {
   rooms: any[] = [];
-  newRoom: { name: string, owner: number } = { name: '', owner: 0 };
+  newRoom: { name: string } = { name: '' };
+  newRoomOwnerUsername: string = '';
   selectedRoom: any;
-  newOwnerId: any;
+  newOwnerUsername: string = '';
   isUpdateMode: boolean = false;
 
   constructor(private authService: AuthService) {
-    this.newOwnerId = null;
   }
 
   ngOnInit(): void {
     this.fetchRooms();
   }
-
+    get isSuperUser(): boolean {
+    return this.authService.isSuperUser();
+  }
+  
   fetchRooms(): void {
     this.authService.getRooms().subscribe(
       (rooms) => {
@@ -32,15 +35,20 @@ export class RoomListComponent implements OnInit {
     );
   }
 
-  createRoom(): void {
-    this.authService.createRoom(this.newRoom).subscribe(
-      (response) => {
-        console.log('Room created:', response);
+ createRoom(): void {
+    const payload = {
+      name: this.newRoom.name,
+      owner_username: this.newRoomOwnerUsername
+    };
+
+    this.authService.createRoom(payload).subscribe(
+      () => {
+        console.log('Room created');
         this.fetchRooms();
+        this.newRoom.name = '';
+        this.newRoomOwnerUsername = '';
       },
-      (error) => {
-        console.error('Failed to create room', error);
-      }
+      (error) => console.error('Failed to create room', error)
     );
   }
 
@@ -50,57 +58,49 @@ export class RoomListComponent implements OnInit {
         this.selectedRoom = room;
         this.isUpdateMode = true;
       },
-      (error) => {
-        console.error('Failed to fetch room for update', error);
-      }
+      (error) => console.error('Failed to fetch room for update', error)
     );
   }
 
   saveUpdatedRoom(): void {
     if (this.isUpdateValid()) {
-      const roomId = this.selectedRoom.id;
-      const updateData = { name: this.selectedRoom.name, owner: this.newOwnerId };
+      const updateData = {
+        name: this.selectedRoom.name,
+        owner_username: this.newOwnerUsername
+      };
 
-      this.authService.updateRoom(roomId, updateData).subscribe(
-        (response) => {
-          console.log('Room updated:', response);
+      this.authService.updateRoom(this.selectedRoom.id, updateData).subscribe(
+        () => {
+          console.log('Room updated');
           this.resetValuesAndRefreshList();
         },
-        (error) => {
-          console.error('Failed to update room', error);
-        }
+        (error) => console.error('Failed to update room', error)
       );
-    } else {
-      console.error('Update conditions not met');
     }
   }
-
-  isUpdateValid(): boolean {
-    return this.newOwnerId !== undefined && this.selectedRoom !== undefined && this.selectedRoom.name !== undefined;
+   isUpdateValid(): boolean {
+    return this.newOwnerUsername && this.selectedRoom?.name;
   }
-
-  resetValuesAndRefreshList(): void {
+ resetValuesAndRefreshList(): void {
     this.selectedRoom = null;
-    this.newOwnerId = null;
+    this.newOwnerUsername = '';
     this.isUpdateMode = false;
     this.fetchRooms();
   }
 
-  deleteRoom(roomId: number): void {
+   deleteRoom(roomId: number): void {
     this.authService.deleteRoom(roomId).subscribe(
       () => {
         console.log('Room deleted');
         this.fetchRooms();
       },
-      (error) => {
-        console.error('Failed to delete room', error);
-      }
+      (error) => console.error('Failed to delete room', error)
     );
   }
 
   cancelUpdate(): void {
     this.isUpdateMode = false;
     this.selectedRoom = null;
-    this.newOwnerId = null;
+    this.newOwnerUsername = '';
   }
 }

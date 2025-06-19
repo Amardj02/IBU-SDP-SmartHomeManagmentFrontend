@@ -1,0 +1,75 @@
+<div class="settings-container">
+  <h2>Settings</h2>
+
+  <!-- Toggle Buttons -->
+  <div class="toggle-buttons">
+    <button (click)="toggleSection('profile')">
+      🔧 Update Profile
+    </button>
+    <button (click)="toggleSection('password')">
+      🔐 Change Password
+    </button>
+  </div>
+
+  <!-- Profile Form -->
+  <form *ngIf="showProfileForm" (ngSubmit)="updateProfile()" #profileForm="ngForm">
+    <h3>Update Profile</h3>
+
+    <label>First Name</label>
+    <input [(ngModel)]="userData.first_name" name="firstName" required />
+
+    <label>Last Name</label>
+    <input [(ngModel)]="userData.last_name" name="lastName" required />
+
+    <label>Email</label>
+    <input [(ngModel)]="userData.email" name="email" type="email" required />
+
+    <button type="submit" [disabled]="!profileForm.valid">Update</button>
+  </form>
+
+  <!-- Password Form -->
+  <form *ngIf="showPasswordForm" (ngSubmit)="changePassword()" #passwordForm="ngForm">
+    <h3>Change Password</h3>
+
+    <div class="password-group">
+      <label>Current Password</label>
+      <div class="password-wrapper">
+        <input [type]="showCurrent ? 'text' : 'password'" [(ngModel)]="currentPassword" name="currentPassword" required />
+        <button type="button" (click)="toggleShow('current')">
+          {{ showCurrent ? '🙈' : '👁️' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="password-group">
+      <label>New Password</label>
+      <div class="password-wrapper">
+        <input [type]="showNew ? 'text' : 'password'" [(ngModel)]="newPassword" name="newPassword" required />
+        <button type="button" (click)="toggleShow('new')">
+          {{ showNew ? '🙈' : '👁️' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="password-group">
+      <label>Confirm New Password</label>
+      <div class="password-wrapper">
+        <input [type]="showConfirm ? 'text' : 'password'" [(ngModel)]="confirmPassword" name="confirmPassword" required />
+        <button type="button" (click)="toggleShow('confirm')">
+          {{ showConfirm ? '🙈' : '👁️' }}
+        </button>
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="!passwordForm.valid || newPassword !== confirmPassword">
+      Change Password
+    </button>
+    <p *ngIf="newPassword !== confirmPassword && confirmPassword" class="error">
+      Passwords do not match.
+    </p>
+  </form>
+
+  <!-- Message Feedback -->
+  <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+</div>

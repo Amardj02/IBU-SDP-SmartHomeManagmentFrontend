@@ -59,4 +59,8 @@ logout(): void {
 isLoggedIn(): boolean {
   return this.authService.isAuthenticated();
 }
+
+isSuperUser(): boolean {
+  return this.authService.isSuperUser();
+}
 }

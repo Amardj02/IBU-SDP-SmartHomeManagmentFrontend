@@ -1,43 +1,54 @@
-<div class="create-room-container">
-  <div class="create-room-box" *ngIf="!isUpdateMode">
-    <h3>Create Room</h3>
-    <form (submit)="createRoom()">
-      <label for="roomName">Room Name:</label>
-      <input type="text" id="roomName" name="roomName" [(ngModel)]="newRoom.name" required>
+<!-- Info text above room list -->
+<div class="room-list-info">
+  <p>
+    Below is a list of all rooms where you are currently assigned as the owner.  
+    To manage devices within your rooms, please proceed to your <strong>Device Dashboard</strong>.
+  </p>
+  <button class="btn-manage-devices" routerLink="/home">Manage Devices</button>
+</div>
+<!-- Create Room form (only superusers) -->
+<div class="room-form-card" *ngIf="!isUpdateMode && isSuperUser">
+  <h3>Create Room</h3>
+  <form (submit)="createRoom()">
+    <label for="roomName">Room Name:</label>
+    <input type="text" id="roomName" name="roomName" [(ngModel)]="newRoom.name" required />
 
-      <label for="ownerId">Owner ID:</label>
-      <input type="number" id="ownerId" name="ownerId" [(ngModel)]="newRoom.owner" required>
+    <label for="ownerUsername">Owner Username:</label>
+    <input type="text" id="ownerUsername" name="ownerUsername" [(ngModel)]="newRoomOwnerUsername" required />
 
-      <button type="submit">Create Room</button>
-    </form>
-  </div>
-
-  <div *ngIf="isUpdateMode" class="update-room-form">
-    <h3>Update Room</h3>
-    <form *ngIf="selectedRoom" (submit)="saveUpdatedRoom()">
-      <label for="updatedRoomName">Room Name:</label>
-      <input type="text" id="updatedRoomName" name="updatedRoomName" [(ngModel)]="selectedRoom.name" required>
-
-      <label for="newOwnerId">New Owner ID:</label>
-      <input type="number" id="newOwnerId" name="newOwnerId" [(ngModel)]="newOwnerId" required>
-
-      <button type="submit">Save Changes</button>
-    </form>
-    <button (click)="cancelUpdate()">Cancel Update</button>
-  </div>
+    <button type="submit" class="btn-primary">Create Room</button>
+  </form>
 </div>
 
-<div class="room-list-container">
-  <mat-icon>room</mat-icon>
-  <h3>Room List</h3>
-  <ul>
-    <li *ngFor="let room of rooms">
+<!-- Update form - only for superusers -->
+<div class="room-form-card" *ngIf="isUpdateMode && isSuperUser">
+  <h3>Update Room</h3>
+  <form *ngIf="selectedRoom" (submit)="saveUpdatedRoom()">
+    <label for="updatedRoomName">Room Name:</label>
+    <input type="text" id="updatedRoomName" name="updatedRoomName" [(ngModel)]="selectedRoom.name" required />
+
+    <label for="newOwnerUsername">New Owner Username:</label>
+    <input type="text" id="newOwnerUsername" name="newOwnerUsername" [(ngModel)]="newOwnerUsername" required />
+
+    <button type="submit" class="btn-primary">Save Changes</button>
+  </form>
+  <button class="btn-secondary" (click)="cancelUpdate()">Cancel Update</button>
+</div>
+
+<!-- Room list - visible to all users -->
+<div class="room-list-section">
+  <h2><mat-icon>room</mat-icon> Room List</h2>
+  <div class="room-cards">
+    <div class="room-card" *ngFor="let room of rooms">
       <div class="room-info">
-        <span class="room-name" *ngIf="room.name !== undefined">Room Name: {{ room.name }}</span><br>
-        <span class="owner-id" *ngIf="room.owner !== undefined">Owner ID: {{ room.owner }}</span>
-        <button class="update-btn" (click)="updateSelectedRoom(room.id)">Update</button>
-        <button class="delete-btn" (click)="deleteRoom(room.id)">Delete</button>
+        <strong class="room-name">Room Name: {{ room.name || 'N/A' }}</strong>
+        <div class="owner-id">Owner: {{ room.owner || 'N/A' }}</div>
       </div>
-    </li>
-  </ul>
+
+      <div class="room-actions" *ngIf="isSuperUser">
+        <button class="btn-update" (click)="updateSelectedRoom(room.id)">Update</button>
+        <button class="btn-delete" (click)="deleteRoom(room.id)">Delete</button>
+      </div>
+    </div>
+  </div>
 </div>
