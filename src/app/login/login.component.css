@@ -106,3 +106,22 @@ body {
 .login-wrapper .mat-form-field-appearance-legacy .mat-form-field-infix {
   padding: 0.8375em 0;
 }
+
+.forgot-password {
+  color: #1976d2;
+  cursor: pointer;
+  margin-top: 10px;
+  text-align: center;
+  font-weight: 500;
+  user-select: none;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  color: red;
+  margin: 10px 0;
+  text-align: center;
+}

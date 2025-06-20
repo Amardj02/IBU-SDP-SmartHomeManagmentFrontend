@@ -151,4 +151,23 @@ getUser(): Observable<any> {
   });
   return this.http.get('http://localhost:8000/api/accounts/me/', { headers });
 }
+requestPasswordReset(email: string): Observable<any> {
+  return this.http.post(`${this.apiUrl}request-reset-email/`, { email });
+}
+confirmPasswordReset(uidb64: string, token: string, newPassword: string): Observable<any> {
+  const body = {
+    uidb64,
+    token,
+    password: newPassword
+  };
+  return this.http.post(`${this.apiUrl}password-reset-confirm/`, body);
+}
+resetPassword(newPassword: string, token: string, uidb64: string): Observable<any> {
+  const body = {
+    password: newPassword,
+    token: token,
+    uidb64: uidb64
+  };
+  return this.http.post('http://localhost:8000/api/accounts/password-reset-confirm/', body);
+}
 }

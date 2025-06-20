@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from './services/auth.service';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -15,11 +16,13 @@ export class AppComponent implements OnInit, OnDestroy{
 
   constructor(private authService: AuthService, private router: Router) {}
    ngOnInit(): void {
-    // Subscribe to the auth status observable
-    this.authSubscription = this.authService.isLoggedIn$.subscribe(status => {
+      this.authSubscription = this.authService.isLoggedIn$.subscribe(status => {
       this.isLoggedIn = status;
-      if (!status) {
-        // Redirect to home after logout
+
+      const currentUrl = this.router.url;
+
+      // Redirect to home only if logged out AND not on public pages like reset-password or login
+      if (!status && !['/reset-password', '/login', '/'].includes(currentUrl)) {
         this.router.navigate(['/home']);
       }
     });

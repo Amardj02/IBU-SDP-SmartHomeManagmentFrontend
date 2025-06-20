@@ -24,8 +24,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { SettingsComponent } from './settings/settings.component';
 import { ToastComponent } from './toast/toast.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 @NgModule({
-  declarations: [AppComponent, LoginComponent, RegisterComponent, RoomListComponent, HomeComponent,SidenavComponent, SidenavLinkComponent, SettingsComponent, ToastComponent],
+  declarations: [AppComponent, LoginComponent, RegisterComponent, RoomListComponent, HomeComponent,SidenavComponent, SidenavLinkComponent, SettingsComponent, ToastComponent, ResetPasswordComponent],
   imports: [
     BrowserModule,
     FormsModule,

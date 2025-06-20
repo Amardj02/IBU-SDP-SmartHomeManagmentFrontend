@@ -3,17 +3,87 @@
     <mat-card-header fxLayout="row" fxLayoutAlign="center center">
       <mat-card-title>Log in</mat-card-title>
     </mat-card-header>
-    <form class="example-form" (ngSubmit)="login()">
+
+    <!-- Login Form -->
+    <form *ngIf="!showForgotPassword" class="example-form" (ngSubmit)="login()">
       <mat-card-content>
         <mat-form-field class="example-full-width">
-          <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
+          <input
+            matInput
+            placeholder="Username"
+            [(ngModel)]="username"
+            name="username"
+            required
+          />
         </mat-form-field>
         <mat-form-field class="example-full-width">
-          <input matInput placeholder="Password" type="password" [(ngModel)]="password" name="password" required>
+          <input
+            matInput
+            placeholder="Password"
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            required
+          />
         </mat-form-field>
       </mat-card-content>
       <div *ngIf="loginError" class="error-message">{{ loginError }}</div>
-      <button mat-stroked-button color="accent" class="btn-block" type="submit">Log in</button>
+
+      <button
+        mat-stroked-button
+        color="accent"
+        class="btn-block"
+        type="submit"
+      >
+        Log in
+      </button>
+
+      <p class="forgot-password" (click)="toggleForgotPassword()">
+        Forgot Password?
+      </p>
+    </form>
+
+    <!-- Forgot Password Form -->
+    <form
+      *ngIf="showForgotPassword"
+      class="example-form"
+      (ngSubmit)="requestPasswordReset()"
+    >
+      <mat-card-content>
+        <mat-form-field class="example-full-width">
+          <input
+            matInput
+            placeholder="Enter your email"
+            [(ngModel)]="resetEmail"
+            name="resetEmail"
+            type="email"
+            required
+          />
+        </mat-form-field>
+      </mat-card-content>
+
+      <button
+        mat-stroked-button
+        color="primary"
+        class="btn-block"
+        type="submit"
+      >
+        Send Reset Link
+      </button>
+
+      <p
+        *ngIf="resetMessage"
+        style="color: green; margin-top: 1rem; font-weight: 600;"
+      >
+        {{ resetMessage }}
+      </p>
+      <p *ngIf="resetError" style="color: red; margin-top: 1rem;">
+        {{ resetError }}
+      </p>
+
+      <p class="forgot-password" (click)="toggleForgotPassword()">
+        Back to Login
+      </p>
     </form>
   </mat-card>
 </div>
